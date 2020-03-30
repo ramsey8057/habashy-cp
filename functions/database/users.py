@@ -24,6 +24,7 @@ def log_user_in(username, password):
     SET is_logged_in = TRUE
     WHERE username = '{username}'
     AND password = '{password}'
+    AND is_logged_in = FALSE
     '''
     return (execute_dml_query(query) >= 1)
 
@@ -105,4 +106,33 @@ def check_if_user_available(username):
     WHERE username = '{username}'
     '''
     return (len(execute_dql_query(query)) <= 0)
+
+def get_user_data(username):
+    query = f'''
+    SELECT username, is_admin
+    FROM users
+    WHERE username = '{username}'
+    '''
+    return execute_dql_query(query)
+
+def edit_user_with_password(old_username, username, password, is_admin):
+    query = f'''
+    UPDATE users
+    SET
+        username = '{username}',
+        password = '{password}',
+        is_admin = {is_admin}
+    WHERE username = '{old_username}'
+    '''
+    return (execute_dml_query(query) >= 1)
+
+def edit_user_without_password(old_username, username, is_admin):
+    query = f'''
+    UPDATE users
+    SET
+        username = '{username}',
+        is_admin = {is_admin}
+    WHERE username = '{old_username}'
+    '''
+    return (execute_dml_query(query) >= 1)
 
