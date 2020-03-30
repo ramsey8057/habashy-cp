@@ -50,7 +50,6 @@ def create_user():
                         return render_template('create_user.html', err=True, err_msg='Username is not available')
                     if password != cpassword:
                         return render_template('create_user.html', err=True, err_msg='Password is not correct')
-                    add_user(username, password, is_admin)
                     if add_user(username, password, is_admin):
                         return redirect(url_for('manage_users', done=True, success_msg='User created successfully'))
                     else:
