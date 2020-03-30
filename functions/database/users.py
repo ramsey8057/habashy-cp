@@ -47,21 +47,12 @@ def add_user(username, password, is_admin):
     '''
     return (execute_dml_query(query) >= 1)
 
-def update_current_user_password(username, current_password, new_password):
+def update_current_user_password(username, password):
     query = f'''
     UPDATE users
-    SET password = '{new_password}'
+    SET password = '{password}'
     WHERE username = '{username}'
-    AND password = '{current_password}'
-    '''
-    return (execute_dml_query(query) >= 1)
-
-def update_other_user_password(username, password):
-    query = f'''
-    UPDATE users
-    SET password = '{username}'
-    WHERE username = '{password}'
-    AND user_id > 0
+    AND is_logged_in = TRUE
     '''
     return (execute_dml_query(query) >= 1)
 
@@ -79,6 +70,7 @@ def delete_user(username):
     DELETE FROM users
     WHERE username = '{username}'
     AND user_id > 0
+    AND is_logged_in = FALSE
     '''
     return (execute_dml_query(query) >= 1)
     
@@ -96,6 +88,7 @@ def log_user_out(username, password):
     SET is_logged_in = FALSE
     WHERE username = '{username}'
     AND PASSWORD = '{password}'
+    AND is_logged_in = TRUE
     '''
     return (execute_dml_query(query) >= 1)
 
@@ -123,6 +116,7 @@ def edit_user_with_password(old_username, username, password, is_admin):
         password = '{password}',
         is_admin = {is_admin}
     WHERE username = '{old_username}'
+    AND is_logged_in = FALSE
     '''
     return (execute_dml_query(query) >= 1)
 
@@ -133,6 +127,7 @@ def edit_user_without_password(old_username, username, is_admin):
         username = '{username}',
         is_admin = {is_admin}
     WHERE username = '{old_username}'
+    AND is_logged_in = FALSE
     '''
     return (execute_dml_query(query) >= 1)
 

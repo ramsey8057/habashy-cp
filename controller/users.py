@@ -1,4 +1,4 @@
-from functions.database.users import check_username_and_password, check_is_admin, delete_user as del_user, add_user, check_if_user_available, get_user_data, edit_user_with_password, edit_user_without_password
+from functions.database.users import check_username_and_password, check_is_admin, delete_user as del_user, add_user, check_if_user_available, get_user_data, edit_user_with_password, edit_user_without_password, update_current_user_password
 from flask import Blueprint, request, render_template, redirect, make_response, url_for
 from functions.utilities import encrypt
 
@@ -17,7 +17,7 @@ def delete_user(username):
                 if del_user(username):
                     return redirect(url_for('manage_users', done=True, success_msg='User deleted successfully'))
                 else:
-                    return redirect(url_for('manage_users', err=True, err_msg='Delete user failed'))
+                    return redirect(url_for('manage_users', err=True, err_msg='Delete user failed, maybe because this user is logged in on another device'))
             else:
                 return redirect('/')
         else:
@@ -50,6 +50,7 @@ def create_user():
                         return render_template('create_user.html', err=True, err_msg='Username is not available')
                     if password != cpassword:
                         return render_template('create_user.html', err=True, err_msg='Password is not correct')
+                    add_user(username, password, is_admin)
                     if add_user(username, password, is_admin):
                         return redirect(url_for('manage_users', done=True, success_msg='User created successfully'))
                     else:
@@ -59,12 +60,46 @@ def create_user():
         else:
             return redirect('/login')
 
+@users.route('/users/manage/current_users', methods=['GET', 'POST'])
+def edit_current_user():
+    current_username = request.cookies.get('username')
+    current_password = request.cookies.get('password')
+    if any([current_username == None, current_password == None]):
+        return redirect('/login')
+    else:
+        if check_username_and_password(current_username, current_password):
+            if request.method == 'GET':
+                return render_template('edit_current_user.html')
+            else:
+                password = request.form.get('password')
+                password = encrypt(password)
+                cpassword = request.form.get('cpassword')
+                cpassword = encrypt(cpassword)
+                if password != cpassword:
+                    return render_template(
+                        'edit_current_user.html',
+                        err=True,
+                        err_msg='Password is not correct'
+                    )
+                if update_current_user_password(current_username, password):
+                    resp = make_response(redirect(url_for('manage_users', done=True, success_msg='User updated successfully')))
+                    resp.set_cookie('password', password)
+                    return resp
+                else:
+                    return render_template(
+                        'edit_user.html',
+                        err=True,
+                        err_msg='User update failed'
+                    )
+        else:
+            return redirect('/login')
+
 @users.route('/users/manage/<string:username>/edit', methods=['GET', 'POST'])
 def edit_user(username):
     current_username = request.cookies.get('username')
     current_password = request.cookies.get('password')
     if any([current_username == None, current_password == None]):
-        return redirect('/')
+        return redirect('/login')
     else:
         if check_username_and_password(current_username, current_password):
             is_admin = check_is_admin(current_username)[0][0]
@@ -116,7 +151,7 @@ def edit_user(username):
                             'edit_user.html',
                             user_data=user_data,
                             err=True,
-                            err_msg='User update failed'
+                            err_msg='User update failed, maybe because this user is logged in on another device'
                         )
             else:
                 return redirect('/')
