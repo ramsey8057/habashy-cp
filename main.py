@@ -1,13 +1,15 @@
-from functions.database.users import check_username_and_password, log_user_in, get_all_users, check_is_admin, log_user_out
+from functions.database.users import check_username_and_password, log_user_in, check_is_admin, log_user_out
 from flask import Flask, request, render_template, redirect, make_response, url_for
 from functions.database.database import connect
 from functions.utilities import encrypt
 from controller.users import users
+from controller.home import home
 
 app = Flask(__name__)
 
 # adding blueprints
 app.register_blueprint(users)
+app.register_blueprint(home)
 
 # creating the routes
 @app.before_request
@@ -26,36 +28,7 @@ def index():
             if is_admin:
                 return redirect('/users/manage')
             else:
-                return 'Under development'
-        else:
-            return redirect('/login')
-
-@app.route('/users/manage')
-def manage_users():
-    username = request.cookies.get('username')
-    password = request.cookies.get('password')
-    if any([username == None, password == None]):
-        return redirect('/login')
-    else:
-        if check_username_and_password(username, password):
-            is_admin = check_is_admin(username)[0][0]
-            if is_admin:
-                err = request.args.get('err')
-                err_msg = request.args.get('err_msg')
-                done = bool(request.args.get('done'))
-                success_msg = request.args.get('success_msg')
-                return render_template(
-                    'manage_users.html',
-                    all_users=get_all_users(),
-                    username=username,
-                    err=err,
-                    err_msg=err_msg,
-                    done=done,
-                    success_msg=success_msg,
-                    is_admin=is_admin
-                )
-            else:
-                return redirect('/')
+                return redirect('/home/manage')
         else:
             return redirect('/login')
 
@@ -81,8 +54,8 @@ def login():
         password = encrypt(password)
         if log_user_in(username, password):
             resp = make_response(redirect('/'))
-            resp.set_cookie('username', username)
-            resp.set_cookie('password', password)
+            resp.set_cookie('username', username, max_age=(31556926 * 10))
+            resp.set_cookie('password', password, max_age=(31556926 * 10))
             return resp
         else:
             return redirect('/login?error=True')

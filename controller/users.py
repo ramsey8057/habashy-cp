@@ -1,8 +1,37 @@
-from functions.database.users import check_username_and_password, check_is_admin, delete_user as del_user, add_user, check_if_user_available, get_user_data, edit_user_with_password, edit_user_without_password, update_current_user_password
+from functions.database.users import get_all_users, check_username_and_password, check_is_admin, delete_user as del_user, add_user, check_if_user_available, get_user_data, edit_user_with_password, edit_user_without_password, update_current_user_password
 from flask import Blueprint, request, render_template, redirect, make_response, url_for
 from functions.utilities import encrypt
 
 users = Blueprint('users', __name__)
+
+@users.route('/users/manage')
+def manage_users():
+    username = request.cookies.get('username')
+    password = request.cookies.get('password')
+    if any([username == None, password == None]):
+        return redirect('/login')
+    else:
+        if check_username_and_password(username, password):
+            is_admin = check_is_admin(username)[0][0]
+            if is_admin:
+                err = request.args.get('err')
+                err_msg = request.args.get('err_msg')
+                done = bool(request.args.get('done'))
+                success_msg = request.args.get('success_msg')
+                return render_template(
+                    'manage_users.html',
+                    all_users=get_all_users(),
+                    username=username,
+                    err=err,
+                    err_msg=err_msg,
+                    done=done,
+                    success_msg=success_msg,
+                    is_admin=is_admin
+                )
+            else:
+                return redirect('/')
+        else:
+            return redirect('/login')
 
 @users.route('/users/manage/<string:username>/delete')
 def delete_user(username):
@@ -15,9 +44,9 @@ def delete_user(username):
             is_admin = check_is_admin(current_username)[0][0]
             if is_admin:
                 if del_user(username):
-                    return redirect(url_for('manage_users', done=True, success_msg='User deleted successfully'))
+                    return redirect(url_for('users.manage_users', done=True, success_msg='User deleted successfully'))
                 else:
-                    return redirect(url_for('manage_users', err=True, err_msg='Delete user failed, maybe because this user is logged in on another device'))
+                    return redirect(url_for('users.manage_users', err=True, err_msg='Delete user failed, maybe because this user is logged in on another device'))
             else:
                 return redirect('/')
         else:
@@ -51,9 +80,10 @@ def create_user():
                     if password != cpassword:
                         return render_template('create_user.html', err=True, err_msg='Password is not correct')
                     if add_user(username, password, is_admin):
-                        return redirect(url_for('manage_users', done=True, success_msg='User created successfully'))
+                        print('Done')
+                        return redirect(url_for('users.manage_users', done=True, success_msg='User created successfully'))
                     else:
-                        return redirect(url_for('manage_users', err=True, err_msg='Create user failed'))
+                        return redirect(url_for('users.manage_users', err=True, err_msg='Create user failed'))
             else:
                 return redirect('/')
         else:
@@ -81,8 +111,8 @@ def edit_current_user():
                         err_msg='Password is not correct'
                     )
                 if update_current_user_password(current_username, password):
-                    resp = make_response(redirect(url_for('manage_users', done=True, success_msg='User updated successfully')))
-                    resp.set_cookie('password', password)
+                    resp = make_response(redirect(url_for('users.manage_users', done=True, success_msg='User updated successfully')))
+                    resp.set_cookie('password', password, max_age=(31556926 * 10))
                     return resp
                 else:
                     return render_template(
@@ -144,7 +174,7 @@ def edit_user(username):
                             is_admin
                         )
                     if result:
-                        return redirect(url_for('manage_users', done=True, success_msg='User updated successfully'))
+                        return redirect(url_for('users.manage_users', done=True, success_msg='User updated successfully'))
                     else:
                         return render_template(
                             'edit_user.html',
