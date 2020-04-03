@@ -57,3 +57,4 @@ def delete_slider_image(slider_image_id):
     WHERE element_id = {slider_image_id}
     '''
     return (execute_dml_query(query) >= 1)
+

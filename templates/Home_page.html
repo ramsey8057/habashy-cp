@@ -123,7 +123,7 @@
                                             <br>
                                             <div class="collapse" id="collapseCards">
                                                 <div class="card card-body">
-                                                    <form method="POST" action="/home/manage">
+                                                    <form method="POST" action="/home/manage" enctype="multipart/form-data">
                                                         <input type="hidden" name="request_for" value="service_cards" />
                                                         <table class="table table-hover">
                                                             <thead>
@@ -133,26 +133,26 @@
                                                                     </th>
                                                                     <th scope="col">
                                                                         <div class="custom-file">
-                                                                            <input type="file" class="custom-file-input" id="customFile">
+                                                                            <input type="file" name="img" class="custom-file-input" id="customFile">
                                                                             <label class="custom-file-label" for="customFile">Choose file</label>
                                                                         </div>
                                                                     </th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                <select id="inputState" class="form-control" name="selected_item">
+                                                                <select id="service_card_id" class="form-control" name="selected_item">
                                                                     <option value="1" selected>1st Image Selected</option>
-                                                                    <option value="1">2nd Image Selected</option>
-                                                                    <option value="1">3rd Image Selected</option>
-                                                                    <option value="1">4th Image Selected</option>
-                                                                    <option value="1">5th Image Selected</option>
-                                                                    <option value="1">6th Image Selected</option>
+                                                                    <option value="2">2nd Image Selected</option>
+                                                                    <option value="3">3rd Image Selected</option>
+                                                                    <option value="4">4th Image Selected</option>
+                                                                    <option value="5">5th Image Selected</option>
+                                                                    <option value="6">6th Image Selected</option>
                                                                 </select>
                                                                 <tr>
                                                                     <th scope="col">Service Title : <h6>less than 15 characters.</h6>
                                                                     </th>
                                                                     <th scope="col">
-                                                                        <input class="form-control mr-sm-2" type="text" placeholder="Enter the title" aria-label="Titel" />
+                                                                        <input id="service_card_title" class="form-control mr-sm-2" type="text" name="title" placeholder="Enter the title" aria-label="Titel" required />
                                                                     </th>
                                                                 </tr>
                                                                 <tr>
@@ -160,7 +160,7 @@
                                                                         Service Desc : <h6>less than 100 characters.</h6>
                                                                     </th>
                                                                     <th scope="col">
-                                                                        <textarea class="form-control " id="validationTextarea" placeholder="Required example textarea" required>
+                                                                        <textarea id="service_card_description" class="form-control" name="description" id="validationTextarea" placeholder="Required example textarea" required>
                                                                         </textarea>
                                                                     </th>
                                                                 </tr>
@@ -169,7 +169,7 @@
                                                                         Service Page Link : <h6>page to go on click.</h6>
                                                                     </th>
                                                                     <th scope="col">
-                                                                        <input aria-multiline="true" class="form-control " type="text" placeholder="Enter the title" aria-label="Titel">
+                                                                        <input id="service_card_link" aria-multiline="true" name="link" class="form-control " type="text" placeholder="Enter the title" aria-label="Titel">
                                                                     </th>
                                                                 </tr>
                                                             </tbody>
@@ -367,7 +367,8 @@
                             </div>
                         </div>
                     </div>
-                        <!-- Bootstrap core JavaScript--><script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+                        <!-- Bootstrap core JavaScript-->
+                        <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
                         <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
                         <!-- Core plugin JavaScript-->
                         <script src="{{ url_for('static', filename='vendor/jquery-easing/jquery.easing.min.js') }}"></script>
@@ -383,6 +384,24 @@
                                 const btn = event.currentTarget;
                                 const url = btn.attributes.link.nodeValue;
                                 $('#preview-image').attr('src', "{{ url_for('static', filename='') }}" + url);
+                            });
+                        </script>
+                        <script>
+                            const all_service_cards = {{ all_service_cards_as_json | safe }};
+                            const service_card_id_select_box = document.getElementById('service_card_id');
+                            const service_card_title = document.getElementById('service_card_title');
+                            const service_card_description = document.getElementById('service_card_description');
+                            const service_card_link = document.getElementById('service_card_link');
+                            // setting the values for the first time
+                            service_card_title.value = all_service_cards[0][2];
+                            service_card_description.value = all_service_cards[0][3];
+                            service_card_link.value = all_service_cards[0][4];
+                            // on value change function
+                            service_card_id_select_box.addEventListener('change', () => {
+                                const i = parseInt(service_card_id_select_box.value) - 1;
+                                service_card_title.value = all_service_cards[i][2];
+                                service_card_description.value = all_service_cards[i][3];
+                                service_card_link.value = all_service_cards[i][4];
                             });
                         </script>
                     </div>
