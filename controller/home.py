@@ -1,6 +1,6 @@
 from functions.database.service_cards import get_all_service_cards, update_service_card, update_service_card_without_img, get_service_card_image_path
 from functions.database.slider_images import get_all_slider_images, delete_slider_image as del_slider_image
-from functions.database.customers import get_all_customers, delete_customer as del_customer
+from functions.database.customers import get_all_customers, delete_customer as del_cust
 from flask import Blueprint, request, render_template, redirect, make_response, url_for
 from functions.database.users import check_username_and_password, check_is_admin
 import pathlib
@@ -93,7 +93,7 @@ def delete_customer(customer_name):
         return redirect('/login')
     else:
         if check_username_and_password(username, password):
-            if del_customer(customer_name):
+            if del_cust(customer_name):
                 return redirect(url_for('home.manage_home', done=True, success_msg='Customer deleted successfully'))
             else:
                 return redirect(url_for('home.manage_home', err=True, err_msg='Delete customer failed'))
