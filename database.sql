@@ -22,8 +22,8 @@ CREATE TABLE service_cards (
     service_link VARCHAR(255) UNIQUE NOT NULL
 );
 
--- CREATE TABLE our_customers (
---     customer_id INTEGER PRIMARY KEY NOT NULL,
---     customer_image_path VARCHAR(255) UNIQUE NOT NULL,
---     customer_name VARCHAR(255) UNIQUE NOT NULL
--- );
+CREATE TABLE customers (
+    customer_id INTEGER PRIMARY KEY NOT NULL,
+    customer_image_path VARCHAR(255) UNIQUE NOT NULL,
+    customer_name VARCHAR(255) UNIQUE NOT NULL
+);

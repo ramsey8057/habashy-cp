@@ -1,5 +1,6 @@
 from functions.database.service_cards import get_all_service_cards, update_service_card, update_service_card_without_img, get_service_card_image_path
-from functions.database.slider_images import get_all_slider_images, delete_slider_image as delete
+from functions.database.slider_images import get_all_slider_images, delete_slider_image as del_slider_image
+from functions.database.customers import get_all_customers, delete_customer as del_customer
 from flask import Blueprint, request, render_template, redirect, make_response, url_for
 from functions.database.users import check_username_and_password, check_is_admin
 import pathlib
@@ -33,7 +34,8 @@ def manage_home():
                     success_msg=success_msg,
                     all_slider_images=get_all_slider_images(),
                     all_service_cards=all_service_cards,
-                    all_service_cards_as_json=json.dumps(all_service_cards)
+                    all_service_cards_as_json=json.dumps(all_service_cards),
+                    all_customers=get_all_customers()
                 )
             else:
                 request_for = request.form.get('request_for')
@@ -68,7 +70,7 @@ def manage_home():
         else:
             return redirect('/login')
 
-@home.route('/home/manage/<int:image_slider_id>/delete')
+@home.route('/home/manage/slider_image/<int:image_slider_id>/delete')
 def delete_slider_image(image_slider_id):
     username = request.cookies.get('username')
     password = request.cookies.get('password')
@@ -76,10 +78,25 @@ def delete_slider_image(image_slider_id):
         return redirect('/login')
     else:
         if check_username_and_password(username, password):
-            if delete(image_slider_id):
+            if del_slider_image(image_slider_id):
                 return redirect(url_for('home.manage_home', done=True, success_msg='Slider image deleted successfully'))
             else:
                 return redirect(url_for('home.manage_home', err=True, err_msg='Delete slider image failed'))
+        else:
+            return redirect('/login')
+
+@home.route('/home/manage/customer/<string:customer_name>/delete')
+def delete_customer(customer_name):
+    username = request.cookies.get('username')
+    password = request.cookies.get('password')
+    if any([username == None, password == None]):
+        return redirect('/login')
+    else:
+        if check_username_and_password(username, password):
+            if del_customer(customer_name):
+                return redirect(url_for('home.manage_home', done=True, success_msg='Customer deleted successfully'))
+            else:
+                return redirect(url_for('home.manage_home', err=True, err_msg='Delete customer failed'))
         else:
             return redirect('/login')
 
