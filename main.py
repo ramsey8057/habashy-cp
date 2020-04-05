@@ -37,17 +37,17 @@ def login():
     if request.method == 'GET':
         error = request.args.get('error')
         if error:
-            return render_template('login.html', error=bool(error))
+            return render_template('users/login.html', error=bool(error))
         else:
             username = request.cookies.get('username')
             password = request.cookies.get('password')
             if any([username == None, password == None]):
-                return render_template('login.html')
+                return render_template('users/login.html')
             else:
                 if check_username_and_password(username, password):
                     return redirect('/')
                 else:
-                     return render_template('login.html', error=True)
+                     return render_template('users/login.html', error=True)
     else:
         username = request.form.get('username')
         password = request.form.get('password')

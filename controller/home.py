@@ -3,7 +3,6 @@ from functions.database.slider_images import get_all_slider_images, delete_slide
 from functions.database.customers import get_all_customers, delete_customer as del_cust
 from flask import Blueprint, request, render_template, redirect, make_response, url_for
 from functions.database.users import check_username_and_password, check_is_admin
-import pathlib
 import json
 import os
 
@@ -59,12 +58,10 @@ def manage_home():
                     img_path = f'img/uploads/service_cards/{selected_item}_img.{extension}'
                     if update_service_card(selected_item, img_path, title, description, link):
                         os.remove(old_img_path)
-                        img.save(url_for('static', filename=f'{img_path}')[1:])
+                        img.save(url_for('static', filename=img_path)[1:])
                         return redirect(url_for('home.manage_home', done=True, success_msg='Service card updated successfully'))
                     else:
                         return redirect(url_for('home.manage_home', err=True, err_msg='Delete slider image failed'))
-                elif request_for == 'our_customers':
-                    pass # TODO: CODE HERE
                 else:
                     return redirect('/')
         else:

@@ -35,3 +35,4 @@ def execute_dml_query(query):
     cur.execute(query)
     con.commit()
     return cur.rowcount # gonna return the affected row count
+

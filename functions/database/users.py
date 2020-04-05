@@ -130,3 +130,4 @@ def edit_user_without_password(old_username, username, is_admin):
     AND is_logged_in = FALSE
     '''
     return (execute_dml_query(query) >= 1)
+

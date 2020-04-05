@@ -19,7 +19,7 @@ def manage_users():
                 done = bool(request.args.get('done'))
                 success_msg = request.args.get('success_msg')
                 return render_template(
-                    'manage_users.html',
+                    'users/manage_users.html',
                     all_users=get_all_users(),
                     username=username,
                     err=err,
@@ -63,7 +63,7 @@ def create_user():
             is_admin = check_is_admin(current_username)[0][0]
             if is_admin:
                 if request.method == 'GET':
-                    return render_template('create_user.html')
+                    return render_template('users/create_user.html')
                 else:
                     username = request.form.get('username')
                     password = request.form.get('password')
@@ -76,11 +76,10 @@ def create_user():
                     else:
                         is_admin = False
                     if not check_if_user_available(username):
-                        return render_template('create_user.html', err=True, err_msg='Username is not available')
+                        return render_template('users/create_user.html', err=True, err_msg='Username is not available')
                     if password != cpassword:
-                        return render_template('create_user.html', err=True, err_msg='Password is not correct')
+                        return render_template('users/create_user.html', err=True, err_msg='Password is not correct')
                     if add_user(username, password, is_admin):
-                        print('Done')
                         return redirect(url_for('users.manage_users', done=True, success_msg='User created successfully'))
                     else:
                         return redirect(url_for('users.manage_users', err=True, err_msg='Create user failed'))
@@ -98,7 +97,7 @@ def edit_current_user():
     else:
         if check_username_and_password(current_username, current_password):
             if request.method == 'GET':
-                return render_template('edit_current_user.html')
+                return render_template('users/edit_current_user.html')
             else:
                 password = request.form.get('password')
                 password = encrypt(password)
@@ -106,7 +105,7 @@ def edit_current_user():
                 cpassword = encrypt(cpassword)
                 if password != cpassword:
                     return render_template(
-                        'edit_current_user.html',
+                        'users/edit_current_user.html',
                         err=True,
                         err_msg='Password is not correct'
                     )
@@ -116,7 +115,7 @@ def edit_current_user():
                     return resp
                 else:
                     return render_template(
-                        'edit_user.html',
+                        'users/edit_user.html',
                         err=True,
                         err_msg='User update failed'
                     )
@@ -139,7 +138,7 @@ def edit_user(username):
                         return redirect('/')
                     user_data = user_data[0]
                     return render_template(
-                        'edit_user.html',
+                        'users/edit_user.html',
                         user_data=user_data
                     )
                 else:
@@ -155,7 +154,7 @@ def edit_user(username):
                         is_admin = False
                     if password != cpassword:
                         return render_template(
-                            'edit_user.html',
+                            'users/edit_user.html',
                             user_data=user_data,
                             err=True,
                             err_msg='Password is not correct'
@@ -177,7 +176,7 @@ def edit_user(username):
                         return redirect(url_for('users.manage_users', done=True, success_msg='User updated successfully'))
                     else:
                         return render_template(
-                            'edit_user.html',
+                            'users/edit_user.html',
                             user_data=user_data,
                             err=True,
                             err_msg='User update failed, maybe because this user is logged in on another device'
