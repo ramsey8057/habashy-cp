@@ -72,3 +72,11 @@ def update_customer_name(old_customer_name, customer_name):
     '''
     return (execute_dml_query(query) >= 1)
 
+def get_customer_image_path(customer_name):
+    query = f'''
+    SELECT customer_image_path
+    FROM customers
+    WHERE customer_name = '{customer_name}'
+    '''
+    return execute_dql_query(query)[0][0]
+

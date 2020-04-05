@@ -58,3 +58,11 @@ def delete_slider_image(slider_image_id):
     '''
     return (execute_dml_query(query) >= 1)
 
+def get_slider_img_image_path(image_slider_id):
+    query = f'''
+    SELECT element_image_path
+    FROM slider_images
+    WHERE element_id = {image_slider_id}
+    '''
+    return execute_dql_query(query)[0][0]
+
