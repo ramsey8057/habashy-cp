@@ -27,3 +27,13 @@ CREATE TABLE customers (
     customer_image_path VARCHAR(255) UNIQUE NOT NULL,
     customer_name VARCHAR(255) UNIQUE NOT NULL
 );
+
+CREATE TABLE information 
+(
+    email VARCHAR(255) PRIMARY KEY NOT NULL,
+    main_phone VARCHAR(255) NOT NULL,
+    other_phone VARCHAR(255) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    city VARCHAR(255) NOT NULL,
+    footer_description VARCHAR(255) NOT NULL
+);

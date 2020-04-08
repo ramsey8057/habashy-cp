@@ -1,6 +1,7 @@
 from functions.database.users import check_username_and_password, log_user_in, check_is_admin, log_user_out
 from flask import Flask, request, render_template, redirect, make_response, url_for
 from functions.database.database import connect
+from controller.information import information
 from functions.utilities import encrypt
 from controller.users import users
 from controller.home import home
@@ -10,6 +11,7 @@ app = Flask(__name__)
 # adding blueprints
 app.register_blueprint(users)
 app.register_blueprint(home)
+app.register_blueprint(information)
 
 # creating the routes
 @app.before_request
