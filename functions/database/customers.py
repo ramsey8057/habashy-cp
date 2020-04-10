@@ -37,7 +37,7 @@ def delete_customer(customer_name):
     '''
     return (execute_dml_query(query) >= 1)
 
-def add_customer(customer_name, customer_image_path):
+def add_customer(customer_id, customer_name, customer_image_path):
     query = f'''
     INSERT INTO customers
     (
@@ -47,7 +47,7 @@ def add_customer(customer_name, customer_image_path):
     )
     VALUES
     (
-        {get_new_customer_id()},
+        {customer_id},
         '{customer_image_path}',
         '{customer_name}'
     )

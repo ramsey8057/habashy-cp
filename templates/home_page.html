@@ -187,6 +187,9 @@
                                     <div class="card shadow">
                                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                             <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-user-tie"></i> Our customers</h6>
+                                            <a class="btn btn-outline-success" href="/home/manage/customers/add" role="button">
+                                                New Customer <i class="far fa-plus-square"></i>
+                                            </a>
                                         </div>
                                         <div class="card-body">
                                             <hr class="sidebar-divider my-0">
@@ -206,6 +209,9 @@
                                                             <td>
                                                                 <a class="btn btn-primary" href="/home/manage/customer/{{ i[2] }}/edit">
                                                                     <i class="fas fa-edit"></i>
+                                                                </a>
+                                                                <a class="btn-warning btn btn-warning2" data-target="#ViewModal2" data-toggle="modal" link="{{ i[1] }}">
+                                                                    <i class="fas fa-eye"></i>
                                                                 </a>
                                                                 <a class="btn-danger btn" href="/home/manage/customer/{{ i[2] }}/delete">
                                                                     <i class="fas fa-times"></i>
@@ -272,18 +278,38 @@
                         <!------------------------privewe------------------------------------->
                         <div class="modal fade" id="ViewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Image Preview</h5>
-                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">×</span>
-                                    </button>
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Image Preview</h5>
+                                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <img src="" id="preview-image" width="250" height="180">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-primary" type="button" data-dismiss="modal">Close</button>
+                                    </div>
                                 </div>
-                                <div class="modal-body">
-                                    <img src="" id="preview-image" width="250" height="180">
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-primary" type="button" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                        <!------------------------privewe------------------------------------->
+                        <div class="modal fade" id="ViewModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Image Preview</h5>
+                                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <img src="" id="preview-image2" width="250" height="180">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-primary" type="button" data-dismiss="modal">Close</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -304,6 +330,13 @@
                                 const btn = event.currentTarget;
                                 const url = btn.attributes.link.nodeValue;
                                 $('#preview-image').attr('src', "{{ url_for('static', filename='') }}" + url);
+                            });
+                        </script>
+                        <script>
+                            $('.btn-warning2').click((event) => {
+                                const btn = event.currentTarget;
+                                const url = btn.attributes.link.nodeValue;
+                                $('#preview-image2').attr('src', "{{ url_for('static', filename='') }}" + url);
                             });
                         </script>
                         <script>

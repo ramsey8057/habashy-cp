@@ -84,23 +84,6 @@ def delete_slider_image(image_slider_id):
         else:
             return redirect('/login')
 
-@home.route('/home/manage/customer/<string:customer_name>/delete')
-def delete_customer(customer_name):
-    username = request.cookies.get('username')
-    password = request.cookies.get('password')
-    if any([username == None, password == None]):
-        return redirect('/login')
-    else:
-        if check_username_and_password(username, password):
-            img_path = url_for('static', filename=get_customer_image_path(customer_name))[1:]
-            if del_cust(customer_name):
-                os.remove(img_path)
-                return redirect(url_for('home.manage_home', done=True, success_msg='Customer deleted successfully'))
-            else:
-                return redirect(url_for('home.manage_home', err=True, err_msg='Delete customer failed'))
-        else:
-            return redirect('/login')
-
 @home.route('/home/manage/slider_image/add', methods=['GET', 'POST'])
 def new_slider_image():
     username = request.cookies.get('username')
